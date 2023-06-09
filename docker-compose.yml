@@ -31,7 +31,33 @@ services:
       - 3306:3306
     volumes:
       - ./data/mysqldata:/var/lib/mysql
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
+  adminer:
+    image: adminer
+    container_name: adminer_home
+    restart: always
+    ports:
+      - 3307:8080
+    networks:
+      - home
+    depends_on:
+      - mysql
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    environment:
+      - ADMINER_DEFAULT_SERVER=mysql
+      - ADMINER_DEFAULT_USERNAME=mysql_user
+      - ADMINER_DEFAULT_PASSWORD=mysql_password
+      - ADMINER_DEFAULT_DATABASE=mysql_db
+      
   mongodb:
     image: mongo:latest
     container_name: mongodb_home
@@ -43,6 +69,8 @@ services:
       - 27017:27017
     volumes:
       - ./data/mongodata:/data/db
+    networks:
+      - home
 
 
   mongo-express:
@@ -60,8 +88,21 @@ services:
       - ME_CONFIG_MONGODB_SERVER=mongodb_home
     depends_on:
       - mongodb
+    networks:
+      - home
 
-
+  redis:
+    image: redis
+    container_name: redis_home
+    restart: always
+    ports:
+      - 6379:6379
+    volumes:
+      - ./data/redis_data:/data
+    environment:
+      - REDIS_PASSWORD=redis_home
+    networks:
+      - home
 
 networks:
   home:
