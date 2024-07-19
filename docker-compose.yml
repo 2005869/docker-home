@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   postgres:
-    image: postgres:latest
+    image: postgres:16.3
     container_name: postgress_home
     restart: always
     environment:
@@ -47,6 +47,7 @@ services:
       - home
     depends_on:
       - mysql
+      - postgres
     logging:
       driver: "json-file"
       options:
