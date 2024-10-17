@@ -105,5 +105,33 @@ services:
     networks:
       - home
 
+  mosquitto:
+    image: eclipse-mosquitto:2.0
+    container_name: mosquitto
+    restart: unless-stopped
+    ports:
+      - "1883:1883"    # Porta padrão MQTT
+      - "9001:9001"    # Porta WebSockets (opcional)
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+    networks:
+      - home
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana_home
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data/grafana:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin_user
+      - GF_SECURITY_ADMIN_PASSWORD=admin_password
+    networks:
+      - home
+
 networks:
   home:
